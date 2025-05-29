@@ -37,10 +37,10 @@ jobs:
       - name: 替换
         run: python3 replace.py
 
-      # - name: Xcode
-      #   run: |
-      #     sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-      #     sudo xcodebuild -license accept
+      - name: Xcode
+        run: |
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          sudo xcodebuild -license accept
 
       # - name: Cmake
       #   run: brew install cmake
@@ -55,11 +55,13 @@ jobs:
 
       - name: 编译
         run: |  
-          export CXXFLAGS="-std=c++17" 
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
+          export CXXFLAGS="-std=c++17"
+          export CXXFLAGS="-D_LIBCPP_ENABLE_CXX20_FEATURES"
           cd zed
           cargo update -p webrtc-sys
           cargo install cargo-about@^0.7
-          script/bundle-mac
 
       - name: 移动文件
         run: move macos
