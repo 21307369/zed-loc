@@ -74,4 +74,4 @@ jobs:
       #       Zed-x86_64.dmg
       #       zed-remote-server-*.gz
       - name: Upload Zed Nightly
-        run: script/upload-nightly macos
+        run: cd zed && script/upload-nightly macos
