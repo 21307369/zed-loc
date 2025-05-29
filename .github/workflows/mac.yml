@@ -63,13 +63,15 @@ jobs:
           cargo update -p webrtc-sys
           cargo install cargo-about@^0.7
 
-      - name: 移动文件
-        run: move macos
+      # - name: 移动文件
+      #   run: move macos
 
-      - name: 上传
-        uses: actions/upload-artifact@v4
-        with:
-          path: |
-            Zed-aarch64.dmg
-            Zed-x86_64.dmg
-            zed-remote-server-*.gz
+      # - name: 上传
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     path: |
+      #       Zed-aarch64.dmg
+      #       Zed-x86_64.dmg
+      #       zed-remote-server-*.gz
+      - name: Upload Zed Nightly
+        run: script/upload-nightly macos
