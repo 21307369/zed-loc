@@ -62,6 +62,7 @@ jobs:
           cd zed
           cargo update -p webrtc-sys
           cargo install cargo-about@^0.7
+          script/bundle-mac
 
       # - name: 移动文件
       #   run: move macos
