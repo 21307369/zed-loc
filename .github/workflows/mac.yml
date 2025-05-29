@@ -22,9 +22,6 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install cargo-about
-        run: cargo install cargo-about@^0.7
-
       - name: 设置 Python 3.10
         uses: actions/setup-python@v3
         with:
@@ -57,8 +54,11 @@ jobs:
       #     echo "nightly" > crates/zed/RELEASE_CHANNEL
 
       - name: 编译
-        run: |
-          cd zed 
+        run: |  
+          export CXXFLAGS="-std=c++17" 
+          cd zed
+          cargo update -p webrtc-sys
+          cargo install cargo-about@^0.7
           script/bundle-mac
 
       - name: 移动文件
