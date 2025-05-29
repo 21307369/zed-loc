@@ -16,6 +16,9 @@ jobs:
       CARGO_TERM_COLOR: always
       CARGO_INCREMENTAL: 0
       RUST_BACKTRACE: 1
+      # 关键修复 - 强制使用 C++17 标准
+      CXXFLAGS: "-std=c++17 -D_LIBCPP_DISABLE_NODISCARD_EXT"
+      MACOSX_DEPLOYMENT_TARGET: "10.15"
     steps:
       - name: Install Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -26,13 +29,15 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
+          
       - uses: actions/checkout@v4
+        
       - name: 手动同步 zed 源代码
         uses: actions/checkout@v4
         with:
           repository: zed-industries/zed
           ref: ${{ inputs.branch }}
-          path: zed      
+          path: zed
 
       - name: 替换
         run: python3 replace.py
@@ -40,39 +45,21 @@ jobs:
       - name: Xcode
         run: |
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-          sudo xcodebuild -license accept
-
-      # - name: Cmake
-      #   run: brew install cmake
-
-      # - name: Set release channel to nightly
-      #   run: |
-      #     cd zed
-      #     set -eu
-      #     version=$(git rev-parse --short HEAD)
-      #     echo "Publishing version: ${version} on release channel nightly"
-      #     echo "nightly" > crates/zed/RELEASE_CHANNEL
+          sudo xcodebuild -license accept          
 
       - name: 编译
         run: |  
+          cd zed
+          # 确保使用正确的编译器
           export CC=/usr/bin/clang
           export CXX=/usr/bin/clang++
-          export CXXFLAGS="-std=c++17"
-          export CXXFLAGS="-D_LIBCPP_ENABLE_CXX20_FEATURES"
-          cd zed
+          
+          # 更新依赖并安装必要工具
           cargo update -p webrtc-sys
           cargo install cargo-about@^0.7
+          
+          # 执行编译
           script/bundle-mac
 
-      # - name: 移动文件
-      #   run: move macos
-
-      # - name: 上传
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     path: |
-      #       Zed-aarch64.dmg
-      #       Zed-x86_64.dmg
-      #       zed-remote-server-*.gz
       - name: Upload Zed Nightly
         run: cd zed && script/upload-nightly macos
