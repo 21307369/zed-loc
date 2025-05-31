@@ -32,7 +32,7 @@ jobs:
           python3 replace.py
           cd zed 
           set -eu
-          script/bundle-mac    
+          script/bundle-mac
 
       - name: 移动文件
         run: move macos
