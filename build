@@ -1,0 +1,11 @@
+#!/bin/bash
+git restore .
+# python3 extract.py
+# python3 delete.py
+python3 replace.py
+cd zed
+set -eu
+version=$(git rev-parse --short HEAD)
+echo "Publishing version: ${version} on release channel nightly"
+echo "nightly" > crates/zed/RELEASE_CHANNEL
+bash script/bundle-mac

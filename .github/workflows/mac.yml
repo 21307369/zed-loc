@@ -16,58 +16,32 @@ jobs:
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "18"
-      - name: 安装最新 Rust 工具链
-        run: |
-          rustup update stable
-          rustup default stable
-          rustup target add aarch64-apple-darwin
-          rustup target add x86_64-apple-darwin
 
       - name: set Python 3.10
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - name: 手动同步 zed 源代码
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Checkout repo
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
-          repository: zed-industries/zed
-          ref: main
-          path: zed
-
-      - name: replace zh-cn
-        run: python3 replace.py
-
-      - name: Xcode
-        run: |
-          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-          sudo xcodebuild -license accept
-      - name: Cmake
-        run: brew install cmake
-
-      - name: Set release channel to nightly
-        run: |
-          cd zed
-          set -eu
-          version=$(git rev-parse --short HEAD)
-          echo "Publishing version: ${version} on release channel nightly"
-          echo "nightly" > crates/zed/RELEASE_CHANNEL
+          clean: false
+        run: |  
+          python3 replace.py
 
       - name: bundle-mac
         run: |
           cd zed 
-          script/bundle-mac
+          set -eu
+          script/bundle-mac    
 
-      - name: Upload Zed Nightly
-        run: cd zed && script/upload-nightly macos
+      - name: 移动文件
+        run: move macos
 
-      # - name: 移动文件
-      #   run: move macos
-
-      # - name: 上传
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     file: |
-      #       Zed-aarch64.dmg
-      #       Zed-x86_64.dmg
-      #       zed-remote-server-*.gz
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        with:
+          file: |
+            Zed-aarch64.dmg
+            Zed-x86_64.dmg
+            zed-remote-server-*.gz
