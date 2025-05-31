@@ -40,7 +40,6 @@ jobs:
 
       - name: Limit target directory size
         run: |
-          ls -an
           cd zed && script/clear-target-dir-if-larger-than 100
 
       - name: Determine version and release channel
@@ -59,8 +58,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Create macOS app bundle
-        run: python3 replace.py && cd zed && script/bundle-mac
+        run: |
+          ls -an
+          python3 replace.py
+          cd zed && script/bundle-mac
 
       - name: Rename binaries
         if: ${{ github.ref == 'refs/heads/main' }} || contains(github.event.pull_request.labels.*.name, 'run-bundling') }}
