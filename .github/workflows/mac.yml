@@ -32,8 +32,7 @@ jobs:
 
       - name: bundle-mac
         run: |
-          cd zed 
-          set -eu
+          cd zed
           script/bundle-mac
 
       - name: 移动文件
