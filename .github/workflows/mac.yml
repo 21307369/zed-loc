@@ -39,7 +39,9 @@ jobs:
           path: zed
 
       - name: Limit target directory size
-        run: cd zed && script/clear-target-dir-if-larger-than 100
+        run: |
+          ls -an
+          cd zed && script/clear-target-dir-if-larger-than 100
 
       - name: Determine version and release channel
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
