@@ -26,10 +26,12 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           clean: false
-        run: |
-          python3 replace.py
-          
+
+      - name: Run replace.py
+        run: python3 replace.py
+
       - name: bundle-mac
+        run: |
           cd zed 
           set -eu
           script/bundle-mac
