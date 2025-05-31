@@ -6,6 +6,6 @@ python3 replace.py
 cd zed
 set -eu
 version=$(git rev-parse --short HEAD)
-echo "Publishing version: ${version} on release channel nightly"
-echo "nightly" > crates/zed/RELEASE_CHANNEL
+# echo "Publishing version: ${version} on release channel nightly"
+# echo "nightly" > crates/zed/RELEASE_CHANNEL
 bash script/bundle-mac
