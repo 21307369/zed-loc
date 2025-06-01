@@ -1,5 +1,4 @@
 name: MacOS 编译
-
 on:
   push:
     branches:
@@ -11,31 +10,30 @@ on:
         type: string
         default: main
         description: "分支名"
-env:
-    CARGO_TERM_COLOR: always
-    CARGO_INCREMENTAL: 0
-    RUST_BACKTRACE: 1
 
 jobs:
   bundle-mac:
     timeout-minutes: 60
     name: macOS 编译
     runs-on: macos-latest
-    strategy:
-      matrix:
-        target: [x86_64-apple-darwin, aarch64-apple-darwin]
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: 0
+      RUST_BACKTRACE: 1
     steps:
-      - uses: actions/setup-rust@v1
-        with:
-          toolchain: stable
-      - name: Install Soft
+      - name: 显示环境信息
+        run: |
+          xcodebuild -version
+          rustc --version
+          cargo --version
+
+      - name: Install Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "18"
-      - uses: actions/setup-xcode@v3 # 安装指定Xcode版本
-        with:
-          xcode-version: "14.3" # 指定版本（如beta版可写'beta'）
-      - uses: actions/setup-python@v3
+
+      - name: 设置 Python 3.10
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10"
           
@@ -47,14 +45,40 @@ jobs:
           ref: main
           path: zed
 
-      - name: replace
-        run: |
-          python3 replace.py
+      - name: 替换
+        run: python3 replace.py
 
-      - name: Create macOS app bundle
+      - name: Xcode
         run: |
-          cd zed
-          script/clear-target-dir-if-larger-than 100
-          script/bundle-mac
-          ls -an
-          cd target && ls -an
+          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          sudo xcodebuild -license accept
+      # - name: Cmake
+      #   run: brew install cmake
+
+
+      # - name: Set release channel to nightly
+      #   run: |
+      #     cd zed
+      #     set -eu
+      #     version=$(git rev-parse --short HEAD)
+      #     echo "Publishing version: ${version} on release channel nightly"
+      #     echo "nightly" > crates/zed/RELEASE_CHANNEL
+
+      - name: 编译
+        run: |
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
+          export CXXFLAGS="-std=c++17"
+          export CXXFLAGS="-D_LIBCPP_ENABLE_CXX20_FEATURES"
+          cd zed && script/bundle-mac
+
+      - name: 移动文件
+        run: move macos
+
+      - name: 上传
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            Zed-aarch64.dmg
+            Zed-x86_64.dmg
+            zed-remote-server-*.gz
