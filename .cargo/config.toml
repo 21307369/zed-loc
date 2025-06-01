@@ -1,4 +1,0 @@
-[target."cfg(all())"]
-rustflags = []
-[profile.release]
-debug = false
