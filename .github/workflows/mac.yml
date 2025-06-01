@@ -1,5 +1,6 @@
 name: MacOS 编译
-on: 
+
+on:
   push:
     branches:
       - main
@@ -16,38 +17,40 @@ jobs:
     timeout-minutes: 60
     name: macOS 编译
     runs-on: macos-latest
+    strategy:
+      matrix:
+        target: [x86_64-apple-darwin, aarch64-apple-darwin]
     env:
       CARGO_TERM_COLOR: always
       CARGO_INCREMENTAL: 0
       RUST_BACKTRACE: 1
     steps:
-      - name: Install Node
+      - uses: actions/checkout@v4
+      - uses: actions/setup-rust@v1
+        with:
+          toolchain: stable
+      - name: Install Soft
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "18"
-
-      - name: 设置 Python 3.10
-        uses: actions/setup-python@v3
+      - uses: actions/setup-xcode@v3 # 安装指定Xcode版本
+        with:
+          xcode-version: "14.3" # 指定版本（如beta版可写'beta'）
+      - uses: actions/setup-python@v3
         with:
           python-version: "3.10"
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - name: 手动同步 zed 源代码
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@v4
         with:
           repository: zed-industries/zed
-          ref:  main
+          ref: main
           path: zed
-
-      - name: Limit target directory size
         run: |
           python3 replace.py
-          mv ./zed/* ./
-          script/clear-target-dir-if-larger-than 100
 
       - name: Create macOS app bundle
         run: |
-          ls -an 
+          cd zed
+          script/clear-target-dir-if-larger-than 100
           script/bundle-mac
-          ls -an 
+          ls -an
           cd target && ls -an
-        
