@@ -1,8 +1,8 @@
 #!/bin/bash
-# git restore .
+git restore .
 # python3 extract.py
 # python3 delete.py
-# python3 replace.py
+python3 replace.py
 
 
 path=$(pwd)
