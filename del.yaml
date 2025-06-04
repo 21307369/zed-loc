@@ -800,3 +800,8 @@ global: # 全局规则，对所有文件生效
   - "entries_by_id"
   - "~"
   - "fs-event-sentinel"
+"zed/crates/node_runtime/src/node_runtime.rs":
+  - "bin/node"
+  - "node.exe"
+  - "bin/npm"
+  - "node_modules/npm/bin/npm-cli.js"

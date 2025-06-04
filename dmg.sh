@@ -9,26 +9,21 @@ fi
 # 创建DMG函数
 create_dmg() {
     local arch=$1
+    local timestr=$(date "+%y%m%d")
     local target_dir="zed/target/$arch/zed"
-    local dmg_path="target/zed-$arch.dmg"
-
+    local dmg_path="target/zed-$arch-$timestr.dmg"
+    local app_path="zed/target/${arch}/release/bundle/osx/Zed.app"
+    local cli_path="zed/target/${arch}/release/cli"
     echo "创建 $arch 架构的DMG..."
-    
-    # 清理并重建目录
-    rm -rf $target_dir && mkdir -p $target_dir
-    
-    # 复制应用
-    cp -R "./zed/target/$arch/release/bundle/osx/Zed Nightly.app" "$target_dir/Zed.app"
-    
-    # 可选：添加快捷方式
-    ln -s /Applications $target_dir
-    
+    rm -rf $target_dir && mkdir -p $target_dir # 清理并重建目录
+    cp ${cli_path} ${app_path}/Contents/MacOS/cli  #复制cli
+    cp -R ${app_path} "$target_dir/Zed.app"  # 复制应用
+    ln -s /Applications $target_dir # 可选：添加快捷方式
     # 创建DMG
     hdiutil create -volname "zed_cn" -srcfolder $target_dir -ov -format UDZO $dmg_path
-}
 
+}
 # 为两种架构创建DMG
 create_dmg "aarch64-apple-darwin"
 create_dmg "x86_64-apple-darwin"
-
 echo "所有架构的DMG创建完成"
