@@ -1,4 +1,4 @@
-name: MacOS 编译
+name: MacOS build
 on:
   push:
     branches:
@@ -46,7 +46,7 @@ jobs:
           python-version: "3.10"
 
       - uses: actions/checkout@v4
-      - name: 手动同步 zed 源代码
+      - name: sync zed source code
         uses: actions/checkout@v4
         with:
           repository: zed-industries/zed
