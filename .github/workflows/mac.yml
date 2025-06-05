@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Install cargo-about
         run: cargo install cargo-about
-        
+
       - name: 显示环境信息
         run: |
           xcodebuild -version
@@ -42,7 +42,7 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
-          
+
       - uses: actions/checkout@v4
       - name: 手动同步 zed 源代码
         uses: actions/checkout@v4
@@ -61,22 +61,18 @@ jobs:
       # - name: Cmake
       #   run: brew install cmake
 
-
-      # - name: Set release channel to nightly
-      #   run: |
-      #     cd zed
-      #     set -eu
-      #     version=$(git rev-parse --short HEAD)
-      #     echo "Publishing version: ${version} on release channel nightly"
-      #     echo "nightly" > crates/zed/RELEASE_CHANNEL
+      - name: Set release channel to nightly
+        run: |
+          cd zed
+          set -eu
+          version=$(git rev-parse --short HEAD)
+          echo "Publishing version: ${version} on release channel stable"
+          echo "stable" > crates/zed/RELEASE_CHANNEL
 
       - name: 编译
         run: |
-          export CC=/usr/bin/clang
-          export CXX=/usr/bin/clang++
-          export CXXFLAGS="-std=c++17"
-          export CXXFLAGS="-D_LIBCPP_ENABLE_CXX20_FEATURES"
-          cd zed && script/bundle-mac
+          cd zed
+          script/bundle-mac
 
       - name: 移动文件
         run: move macos
