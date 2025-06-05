@@ -2,18 +2,21 @@
 # git restore .
 # python3 extract.py
 # python3 delete.py
+cd zed &&git restore . &&git pull
+cd ..
+
 python3 replace.py
+cp mac/bundle-mac zed/script && cp mac/config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
+
 
 
 path=$(pwd)
 # 检查并创建必要的目标目录
 if [ ! -d "target" ]; then
-    mkdir -p "target"
-    echo "创建 target 目录..."
+    mkdir -p "target" && echo "创建 target 目录..."
 fi
 
 cd zed
-set -eu
 version=$(git rev-parse --short HEAD)
 echo "Publishing version: ${version} on release channel release"
 echo "stable" > crates/zed/RELEASE_CHANNEL
@@ -67,13 +70,6 @@ create_dmg() {
         return 1
     fi
 
-    # 复制 CLI 到指定位置
-    cp "$cli_path" "${app_path}/Contents/MacOS/cli"
-    if [ $? -ne 0 ]; then
-        echo "复制 CLI 文件失败"
-        return 1
-    fi
-
     # 复制应用到目标目录
     cp -R "$app_path" "$target_dir/Zed.app"
     if [ $? -ne 0 ]; then
@@ -96,6 +92,6 @@ create_dmg() {
 
 
 # 为两种架构创建DMG
-create_dmg "aarch64-apple-darwin"
+# create_dmg "aarch64-apple-darwin"
 create_dmg "x86_64-apple-darwin"
 #  cross build -p remote_server --target x86_64-unknown-linux-gnu --release

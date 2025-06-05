@@ -38,7 +38,7 @@ for file_path, replacements in json_data.items():
 
 print('Successfully replaced strings in the original files')
 
-if missing_files:
-    print('The following files were not found:')
-    for missing_file in missing_files:
-        print(missing_file)
+# if missing_files:
+#     print('The following files were not found:')
+#     for missing_file in missing_files:
+#         print(missing_file)
