@@ -29,7 +29,6 @@ jobs:
           cargo --version
           jq --version
           rustup toolchain list
-          cargo about -V
           export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=$(xcrun --show-sdk-path)"
 
       - name: Install cargo-about
