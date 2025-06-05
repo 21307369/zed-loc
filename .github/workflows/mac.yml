@@ -21,6 +21,9 @@ jobs:
       CARGO_INCREMENTAL: 0
       RUST_BACKTRACE: 1
     steps:
+      - name: Install cargo-about
+        run: cargo install cargo-about
+        
       - name: 显示环境信息
         run: |
           xcodebuild -version
@@ -28,6 +31,7 @@ jobs:
           cargo --version
           jq --version
           rustup toolchain list
+          cargo about -V
 
       - name: Install Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
