@@ -19,8 +19,22 @@ echo "Publishing version: ${version} on release channel release"
 echo "stable" > crates/zed/RELEASE_CHANNEL
 export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=$(xcrun --show-sdk-path)"
 
-rm -rf zed/target
+# rm -rf target/x86_64-apple-darwin/release/deps
+# rm -rf target/aarch64-apple-darwin/release/deps
+
+start_time=$(date +%s)
+echo -e "\033[32m开始编译: $(date +'%Y-%m-%d %H:%M:%S')\033[0m"
 script/bundle-mac
+end_time=$(date +%s)
+echo -e "\033[32m编译完成: $(date +'%Y-%m-%d %H:%M:%S')\033[0m"
+# 计算时间差
+duration=$((end_time - start_time))
+# 格式化时间差（小时、分钟、秒）
+hours=$((duration / 3600))
+minutes=$(((duration % 3600) / 60))
+seconds=$((duration % 60))
+
+echo "耗时: ${hours}小时${minutes}分钟${seconds}秒"
 
 cd $path
 # 创建DMG函数
@@ -31,14 +45,53 @@ create_dmg() {
     local dmg_path="target/zed-$arch-$timestr.dmg"
     local app_path="zed/target/${arch}/release/bundle/osx/Zed.app"
     local cli_path="zed/target/${arch}/release/cli"
-    echo "创建 $arch 架构的DMG..."
-    rm -rf $target_dir && mkdir -p $target_dir # 清理并重建目录
-    cp ${cli_path} ${app_path}/Contents/MacOS/cli  #复制cli
-    cp -R ${app_path} "$target_dir/Zed.app"  # 复制应用
-    ln -s /Applications $target_dir # 可选：添加快捷方式
-    # 创建DMG
-    hdiutil create -volname "zed_cn" -srcfolder $target_dir -ov -format UDZO $dmg_path
+    local volume_name="zed_cn"  # 可抽取为参数或配置项
 
+    echo "创建 $arch 架构的DMG..."
+
+    # 清理并重建目录
+    rm -rf "$target_dir" && mkdir -p "$target_dir"
+    if [ $? -ne 0 ]; then
+        echo "清理或创建目录失败: $target_dir"
+        return 1
+    fi
+
+    # 检查 cli 和 app 是否存在
+    if [ ! -f "$cli_path" ]; then
+        echo "CLI 文件不存在: $cli_path"
+        return 1
+    fi
+
+    if [ ! -d "$app_path" ]; then
+        echo "应用目录不存在: $app_path"
+        return 1
+    fi
+
+    # 复制 CLI 到指定位置
+    cp "$cli_path" "${app_path}/Contents/MacOS/cli"
+    if [ $? -ne 0 ]; then
+        echo "复制 CLI 文件失败"
+        return 1
+    fi
+
+    # 复制应用到目标目录
+    cp -R "$app_path" "$target_dir/Zed.app"
+    if [ $? -ne 0 ]; then
+        echo "复制应用失败"
+        return 1
+    fi
+
+    # 创建指向 Applications 的快捷方式（可选）
+    ln -s /Applications "$target_dir/Applications"
+
+    # 创建 DMG
+    hdiutil create -volname "$volume_name" -srcfolder "$target_dir" -ov -format UDZO "$dmg_path"
+    if [ $? -ne 0 ]; then
+        echo "创建 DMG 失败"
+        return 1
+    fi
+
+    echo "DMG 创建成功: $dmg_path"
 }
 
 
