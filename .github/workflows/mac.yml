@@ -15,7 +15,7 @@ jobs:
   bundle-mac:
     timeout-minutes: 60
     name: macOS build
-    runs-on: macos-14-large
+    runs-on: macos-15-large
     env:
       CARGO_TERM_COLOR: always
       CARGO_INCREMENTAL: 0
@@ -30,6 +30,7 @@ jobs:
           jq --version
           rustup toolchain list
           cargo about -V
+          export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=$(xcrun --show-sdk-path)"
 
       - name: Install cargo-about
         run: cargo install cargo-about && brew install cmake
