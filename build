@@ -17,6 +17,7 @@ if [ ! -d "target" ]; then
 fi
 
 cd zed
+set -e
 version=$(git rev-parse --short HEAD)
 echo "Publishing version: ${version} on release channel release"
 echo "stable" > crates/zed/RELEASE_CHANNEL
@@ -90,8 +91,29 @@ create_dmg() {
     echo "DMG 创建成功: $dmg_path"
 }
 
+copydmg(){
+    local arch=$1
+    local timestr=$(date "+%y%m%d")
+    local dmg_name="zed-$arch-$timestr.dmg"
+
+    echo "复制 $arch 架构的DMG..."
+    # 复制 DMG 到目标目录
+    cp "zed/target/$arch/release/Zed.dmg" "target/$dmg_name"
+    if [ $? -ne 0 ]; then
+        echo "复制 DMG 失败"
+        return 1
+    fi
+    echo "复制 $arch 架构的DMG 完成"
+    return 0
+
+
+}
+# 为两种架构创建DMG
+# copydmg "aarch64-apple-darwin"
+copydmg "x86_64-apple-darwin"
+echo "所有架构的DMG创建完成"
 
 # 为两种架构创建DMG
 # create_dmg "aarch64-apple-darwin"
-create_dmg "x86_64-apple-darwin"
-#  cross build -p remote_server --target x86_64-unknown-linux-gnu --release
+# create_dmg "x86_64-apple-darwin"
+# cross build -p remote_server --target x86_64-unknown-linux-gnu --release
