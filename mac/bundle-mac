@@ -166,7 +166,7 @@ function download_and_unpack() {
 function download_git() {
     local architecture=$1
     local target_binary=$2
-    local githubfast="https://ghfast.top/"
+    local githubfast="https://gh-proxy.com/"
     tmp_dir=$(mktemp -d)
     pushd "$tmp_dir"
     
