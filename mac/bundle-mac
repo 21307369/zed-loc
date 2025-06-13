@@ -77,7 +77,8 @@ if [ "$cargo_bundle_version" != "cargo-bundle v0.6.1-zed" ]; then
 fi
 
 # Deal with versions of macOS that don't include libstdc++ headers
-export CXXFLAGS="-stdlib=libc++"
+# export CXXFLAGS="-stdlib=libc++"
+export CXXFLAGS="-stdlib=libc++ -D_LIBCPP_DISABLE_AVAILABILITY -D_LIBCPP_DISABLE_CONCEPTS"
 
 version_info=$(rustc --version --verbose)
 host_line=$(echo "$version_info" | grep host)
