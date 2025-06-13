@@ -5860,5 +5860,19 @@
     "User edited {:?}:\n```diff\n{}\n```": "用户编辑了 {:?}:\n```diff\n{}\n```",
     "zeta prediction failed": "",
     "Lorem ipsum dolor": ""
+  },
+  "zed/crates/agent/src/profile_selector.rs": {
+    "Custom Profiles": "自定义配置",
+    "Configure Profiles…": "配置文件…",
+    "Get help to write anything.":"获取帮助写任何东西。",
+    "Chat about your codebase.":"与你的代码库聊天。",
+    "Chat about anything with no tools.":"无需任何工具，畅所欲言。",
+    "profile-selector-model":"配置文件选择器模型",
+    "profile-selector":"配置文件选择器",
+    "Toggle Profile Menu":"切换配置文件菜单",
+    "tools-not-supported-button":"工具不支持按钮",
+    "Tools Unsupported":"工具不支持",
+    "This model does not support tools.":"此模型不支持工具。"
   }
+  
 }

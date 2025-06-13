@@ -169,7 +169,7 @@ function download_git() {
     local githubfast="https://gh-proxy.com/"
     tmp_dir=$(mktemp -d)
     pushd "$tmp_dir"
-    
+
     case "$architecture" in
         aarch64-apple-darwin)
             download_and_unpack "${githubfast}https://github.com/desktop/dugite-native/releases/download/${GIT_VERSION}/dugite-native-${GIT_VERSION}-${GIT_VERSION_SHA}-macOS-arm64.tar.gz" bin/git ./git
@@ -225,7 +225,7 @@ function sign_app_binaries() {
     local app_path=$1
     local architecture=$2
     local architecture_dir=$3
-    
+
     echo "app_path at $app_path for $architecture"
 
     rm -rf "${app_path}/Contents/Frameworks"

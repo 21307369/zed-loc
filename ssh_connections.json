@@ -1,0 +1,169 @@
+{
+  "ssh_connections": [
+    {
+      "nickname": "likaikeji.top",
+      "host": "likaikeji.top",
+      "username": "root",
+      "args": [
+        "-i",
+        "Users/lsmir2/Documents/rootKey/cdsyxd.cn_root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "tyjd.top",
+      "host": "tyjd.top",
+      "username": "root",
+      "args": [
+        "-i",
+        "Users/lsmir2/Documents/rootKey/cdsyxd.cn_root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "yanghengsm",
+      "host": "47.122.113.177",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/csyhkj_root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "金软",
+      "host": "8.155.24.154",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/lsmir2New.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "wcwl_2c4g",
+      "host": "47.113.196.83",
+      "username": "root",
+      "args": [
+        "-i",
+        "Users/lsmir2/Documents/rootKey/WC_HY_root_kek.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "xijindianzi.cc",
+      "host": "121.43.130.84",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/aliyun3551082976root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "120.26.65.137",
+      "host": "120.26.65.137",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/江苏百智易root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "47.116.216.73",
+      "host": "47.116.216.73",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/wc_root_KEY.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "lsmir2.com",
+      "host": "101.37.165.186",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/lsmir2New.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "openeuler.orb.local",
+      "host": "openeuler.orb.local",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/lsmir2New.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "runwuwusheng",
+      "host": "8.155.27.16",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/runwuwusheng_root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "xdy-game",
+      "host": "8.155.47.9",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/runwuwusheng_root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "xdy-pay",
+      "host": "47.115.211.248",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/runwuwusheng_root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "如盼-pay",
+      "host": "47.120.45.34",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/runwuwusheng_root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    },
+    {
+      "nickname": "秀兰网络",
+      "host": "47.120.60.40",
+      "username": "root",
+      "args": [
+        "-i",
+        "/Users/lsmir2/Documents/rootKey/runwuwusheng_root_key.pem"
+      ],
+      "projects": [],
+      "upload_binary_over_ssh": true
+    }
+  ]
+}

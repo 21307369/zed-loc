@@ -21,15 +21,6 @@ jobs:
       CARGO_INCREMENTAL: 0
       RUST_BACKTRACE: 1
     steps:
-      - name: Display environment information
-        run: |
-          uname -m
-          xcodebuild -version
-          rustc --version
-          cargo --version
-          jq --version
-          rustup toolchain list
-          export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=$(xcrun --show-sdk-path)"
 
       - name: Install cargo-about
         run: cargo install cargo-about && brew install cmake
@@ -52,28 +43,13 @@ jobs:
           ref: main
           path: zed
 
-      - name: replace language chinese
-        run: python3 replace.py
-
       - name: Xcode
         run: |
           sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
           sudo xcodebuild -license accept
-      # - name: Cmake
-      #   run: brew install cmake
-
-      - name: Set release channel to stable
-        run: |
-          cd zed
-          set -eu
-          version=$(git rev-parse --short HEAD)
-          echo "Publishing version: ${version} on release channel stable"
-          echo "stable" > crates/zed/RELEASE_CHANNEL
 
       - name: build
-        run: |
-          cd zed
-          script/bundle-mac
+        run:  bash build.sh
 
       - name: Move files
         run: move macos
