@@ -15,7 +15,7 @@ jobs:
   bundle-mac:
     timeout-minutes: 60
     name: macOS build
-    runs-on: macos-latest-large
+    runs-on: macos-latest
     env:
       CARGO_TERM_COLOR: always
       CARGO_INCREMENTAL: 0
