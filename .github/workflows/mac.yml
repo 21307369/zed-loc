@@ -15,7 +15,7 @@ jobs:
   bundle-mac:
     timeout-minutes: 60
     name: macOS build
-    runs-on: macos-13
+    runs-on: macos-latest-large
     env:
       CARGO_TERM_COLOR: always
       CARGO_INCREMENTAL: 0
@@ -49,7 +49,7 @@ jobs:
           sudo xcodebuild -license accept
 
       - name: build
-        run:  bash build.sh
+        run:  ./build
 
       - name: Move files
         run: move macos
