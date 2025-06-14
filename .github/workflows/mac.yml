@@ -17,11 +17,12 @@ jobs:
     name: macOS build
     runs-on: macos-latest
     env:
+      CXXFLAGS: "-stdlib=libc++ -D_LIBCPP_DISABLE_AVAILABILITY -D_LIBCPP_DISABLE_CONCEPTS -std=c++17"
+      RUSTFLAGS: "-C linker=clang++"
       CARGO_TERM_COLOR: always
       CARGO_INCREMENTAL: 0
       RUST_BACKTRACE: 1
     steps:
-
       - name: Install cargo-about
         run: cargo install cargo-about && brew install cmake
 
@@ -45,11 +46,12 @@ jobs:
 
       - name: Xcode
         run: |
-          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode_15.4.app
+          sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
           sudo xcodebuild -license accept
 
       - name: build
-        run:  ./build
+        run:  ./buildgithub
 
       - name: Move files
         run: move macos

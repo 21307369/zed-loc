@@ -1,0 +1,71 @@
+#!/bin/bash
+# git restore .
+# python3 extract.py
+# python3 delete.py
+cd zed &&git restore . &&git pull
+cd ..
+
+python3 replace.py
+cp mac/github-mac zed/script/bundle-mac && cp mac/config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
+
+
+
+path=$(pwd)
+# 检查并创建必要的目标目录
+if [ ! -d "target" ]; then
+    mkdir -p "target" && echo "创建 target 目录..."
+fi
+
+cd zed
+set -e
+version=$(git rev-parse --short HEAD)
+echo "Publishing version: ${version} on release channel release"
+echo "stable" > crates/zed/RELEASE_CHANNEL
+export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=$(xcrun --show-sdk-path)"
+
+rm -rf target/x86_64-apple-darwin/release/deps
+rm -rf target/aarch64-apple-darwin/release/deps
+
+start_time=$(date +%s)
+echo -e "\033[32m开始编译: $(date +'%Y-%m-%d %H:%M:%S')\033[0m"
+script/bundle-mac
+end_time=$(date +%s)
+echo -e "\033[32m编译完成: $(date +'%Y-%m-%d %H:%M:%S')\033[0m"
+# 计算时间差
+duration=$((end_time - start_time))
+# 格式化时间差（小时、分钟、秒）
+hours=$((duration / 3600))
+minutes=$(((duration % 3600) / 60))
+seconds=$((duration % 60))
+
+echo "\033[93m编译耗时: ${hours}小时${minutes}分钟${seconds}秒\033[0m"
+
+cd $path
+
+
+copydmg(){
+    local arch=$1
+    local timestr=$(date "+%y%m%d")
+    local dmg_name="zed-$arch-$timestr.dmg"
+
+    echo "复制 $arch 架构的DMG..."
+    # 复制 DMG 到目标目录
+    cp "zed/target/$arch/release/Zed.dmg" "target/$dmg_name"
+    if [ $? -ne 0 ]; then
+        echo "复制 DMG 失败"
+        return 1
+    fi
+    echo "复制 $arch 架构的DMG 完成"
+    return 0
+
+
+}
+# 为两种架构创建DMG
+# copydmg "aarch64-apple-darwin"
+copydmg "x86_64-apple-darwin"
+echo "所有架构的DMG创建完成"
+
+# 为两种架构创建DMG
+# create_dmg "aarch64-apple-darwin"
+# create_dmg "x86_64-apple-darwin"
+# cross build -p remote_server --target x86_64-unknown-linux-gnu --release

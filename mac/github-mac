@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-source script/lib/blob-store.sh
+# source script/lib/blob-store.sh
 
 build_flag="--release"
 target_dir="release"
@@ -79,7 +79,6 @@ fi
 # Deal with versions of macOS that don't include libstdc++ headers
 export CXXFLAGS="-stdlib=libc++"
 
-
 version_info=$(rustc --version --verbose)
 host_line=$(echo "$version_info" | grep host)
 local_target_triple=${host_line#*: }
@@ -93,7 +92,7 @@ if [ "$local_arch" = true ]; then
 else
     echo "Compiling zed binaries"
     # cargo build ${build_flag} --package zed --package cli  --target x86_64-apple-darwin
-    # cargo build ${build_flag} --package zed --package cli --target aarch64-apple-darwin --target x86_64-apple-darwin
+    cargo build ${build_flag} --package zed --package cli --target aarch64-apple-darwin --target x86_64-apple-darwin
     # Build remote_server in separate invocation to prevent feature unification from other crates
     # from influencing dynamic libraries required by it.
     # cargo build ${build_flag} --package remote_server     --target aarch64-apple-darwin --target x86_64-apple-darwin
@@ -112,7 +111,7 @@ if [ "$local_arch" = true ]; then
 else
     # app_path_x64="target/x86_64-apple-darwin/release/bundle/osx/Zed.app"
     app_path_x64=$(cargo bundle ${build_flag} --target x86_64-apple-darwin  --select-workspace-root | xargs)
-    # app_path_aarch64=$(cargo bundle ${build_flag} --target aarch64-apple-darwin --select-workspace-root | xargs)
+    app_path_aarch64=$(cargo bundle ${build_flag} --target aarch64-apple-darwin --select-workspace-root | xargs)
     app_path=$app_path_x64
 
 fi
@@ -167,7 +166,7 @@ function download_and_unpack() {
 function download_git() {
     local architecture=$1
     local target_binary=$2
-    local githubfast="https://gh-proxy.com/"
+    local githubfast=""
     tmp_dir=$(mktemp -d)
     pushd "$tmp_dir"
 
