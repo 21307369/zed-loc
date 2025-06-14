@@ -10,10 +10,10 @@ jobs:
   build-linux: # 脚本来自 zed 官方仓库
     runs-on: ubuntu-22.04
     steps:
-      - name: 设置 Python 3.10
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10"
+      # - name: 设置 Python 3.10
+      #   uses: actions/setup-python@v3
+      #   with:
+      #     python-version: "3.10"
       - uses: actions/checkout@v4
       - name: 手动同步 zed 源代码
         uses: actions/checkout@v4
@@ -28,13 +28,15 @@ jobs:
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: 安装 Linux 依赖项
-        run: ./zed/script/linux && ./zed/script/install-mold 2.34.0
-
-      - name: 限制目标目录大小
-        run: zed/script/clear-target-dir-if-larger-than 100
+        run: | 
+          ./zed/script/linux
+          ./zed/script/install-mold 2.34.0
+          ./zed/script/clear-target-dir-if-larger-than 100
 
       - name: 创建 Linux .tar.gz 包
-        run: cd zed && script/bundle-linux
+        run: |
+          cp mac/config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
+          cd zed && script/bundle-linux
       
       - name: 上传
         run: cd zed && script/upload-nightly linux-targz
@@ -57,10 +59,10 @@ jobs:
     runs-on: ubuntu-22.04-arm
 
     steps:
-      - name: 设置 Python 3.10
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10"
+      # - name: 设置 Python 3.10
+      #   uses: actions/setup-python@v3
+      #   with:
+      #     python-version: "3.10"
       - uses: actions/checkout@v4
       - name: 手动同步 zed 源代码
         uses: actions/checkout@v4
@@ -75,7 +77,9 @@ jobs:
         run: ./zed/script/linux
 
       - name: 限制目标目录大小
-        run: zed/script/clear-target-dir-if-larger-than 100
+        run: |
+          cp mac/config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
+          zed/script/clear-target-dir-if-larger-than 100
 
       - name: 创建 Linux .tar.gz 包
         run: cd zed && script/bundle-linux
