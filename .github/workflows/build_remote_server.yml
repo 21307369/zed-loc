@@ -39,3 +39,24 @@ jobs:
         with:
           name: remote_server-linux
           path: remote_server-linux.tar.gz
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: remote-server-linux-${{ github.run_id }}
+          release_name: Remote Server Linux Build ${{ github.run_id }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./remote_server-linux.tar.gz
+          asset_name: remote_server-linux.tar.gz
+          asset_content_type: application/gzip
