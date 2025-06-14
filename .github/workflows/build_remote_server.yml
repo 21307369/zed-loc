@@ -1,0 +1,41 @@
+name: Build Remote Server (Linux)
+
+on:
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  build:
+    runs-on: buildjet-8vcpu-ubuntu-2204
+    steps:
+      - uses: actions/checkout@v4
+      - name: 手动同步 zed 源代码
+        uses: actions/checkout@v4
+        with:
+          repository: zed-industries/zed
+          ref: main
+          path: zed
+
+      - name: Install Rust
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: 安装 Linux 依赖项
+        run: |
+          cp mac/config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
+          ./zed/script/linux
+          ./zed/script/install-mold 2.34.0
+          ./zed/script/clear-target-dir-if-larger-than 100
+
+      - name: Build Remote Server
+        run: cd zed && cargo build -p remote_server --release 
+
+      - name: Create tarball
+        run: |
+          mkdir -p package
+          cp zed/target/release/remote_server package/
+          tar czvf remote_server-linux.tar.gz package/*
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: remote_server-linux
+          path: remote_server-linux.tar.gz

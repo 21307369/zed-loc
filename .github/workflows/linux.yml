@@ -10,10 +10,6 @@ jobs:
   build-linux: # 脚本来自 zed 官方仓库
     runs-on: ubuntu-22.04
     steps:
-      # - name: 设置 Python 3.10
-      #   uses: actions/setup-python@v3
-      #   with:
-      #     python-version: "3.10"
       - uses: actions/checkout@v4
       - name: 手动同步 zed 源代码
         uses: actions/checkout@v4
@@ -28,7 +24,7 @@ jobs:
         run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: 安装 Linux 依赖项
-        run: | 
+        run: |
           ./zed/script/linux
           ./zed/script/install-mold 2.34.0
           ./zed/script/clear-target-dir-if-larger-than 100
@@ -37,23 +33,21 @@ jobs:
         run: |
           cp mac/config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
           cd zed && script/bundle-linux
-      
-      - name: 上传
-        run: cd zed && script/upload-nightly linux-targz
 
-      #- name: 移动文件
-      #  run: mv zed/target/release/zed-*-linux-x86_64.tar.gz zed-linux-x86_64.tar.gz
+      - name: 移动文件
+        run: mv zed/target/release/zed-*-linux-x86_64.tar.gz zed-linux-x86_64.tar.gz
 
-      #- name: 上传文件
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: zed-linux-x86_64
-      #    path: zed-linux-x86_64.tar.gz
-      #- name: 上传文件
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: zed-remote-server-linux-x86_64
-      #    path: zed/target/zed-remote-server-linux-x86_64
+      - name: 上传文件 zed-linux-x86_64
+        uses: actions/upload-artifact@v4
+        with:
+          name: zed-linux-x86_64
+          path: zed-linux-x86_64.tar.gz
+
+      - name: 上传文件 zed-remote-server-linux-x86_64
+        uses: actions/upload-artifact@v4
+        with:
+          name: zed-remote-server-linux-x86_64
+          path: zed/target/zed-remote-server-linux-x86_64
 
   bundle-linux-arm:
     runs-on: ubuntu-22.04-arm
@@ -83,9 +77,9 @@ jobs:
 
       - name: 创建 Linux .tar.gz 包
         run: cd zed && script/bundle-linux
-      
-      - name: 上传
-        run: cd zed && script/upload-nightly linux-targz
+
+      # - name: 上传
+      #   run: cd zed && script/upload-nightly linux-targz
 
       # - name: 移动
       #   run: mv zed/target/release/zed-*.tar.gz zed-linux-arm64.tar.gz
