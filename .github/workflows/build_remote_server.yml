@@ -20,7 +20,7 @@ jobs:
 
       - name: 安装 Linux 依赖项
         run: |
-          cp mac/config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
+          cp mac/github-config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
           ./zed/script/linux
           ./zed/script/install-mold 2.34.0
           ./zed/script/clear-target-dir-if-larger-than 100
