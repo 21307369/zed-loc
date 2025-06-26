@@ -26,12 +26,12 @@ jobs:
           ./zed/script/clear-target-dir-if-larger-than 100
 
       - name: Build Remote Server
-        run: cd zed && cargo build -p remote_server --release 
+        run: cd zed && cargo build --package remote_server --target x86_64-unknown-linux-gnu --release
 
       - name: Create tarball
         run: |
           mkdir -p package
-          cp zed/target/release/remote_server package/
+          cp zed/target/x86_64-unknown-linux-gnu/release/remote_server package/
           tar czvf remote_server-linux.tar.gz package/*
 
       - name: Upload artifact
