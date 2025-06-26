@@ -8,7 +8,7 @@ members = [
     "crates/anthropic",
     "crates/askpass",
     "crates/assets",
-    "crates/assistant_context_editor",
+    "crates/assistant_context",
     "crates/assistant_slash_command",
     "crates/assistant_slash_commands",
     "crates/assistant_tool",
@@ -165,6 +165,7 @@ members = [
     "crates/ui_prompt",
     "crates/util",
     "crates/util_macros",
+    "crates/vercel",
     "crates/vim",
     "crates/vim_mode_setting",
     "crates/watch",
@@ -221,7 +222,7 @@ ai = { path = "crates/ai" }
 anthropic = { path = "crates/anthropic" }
 askpass = { path = "crates/askpass" }
 assets = { path = "crates/assets" }
-assistant_context_editor = { path = "crates/assistant_context_editor" }
+assistant_context = { path = "crates/assistant_context" }
 assistant_slash_command = { path = "crates/assistant_slash_command" }
 assistant_slash_commands = { path = "crates/assistant_slash_commands" }
 assistant_tool = { path = "crates/assistant_tool" }
@@ -375,6 +376,7 @@ ui_macros = { path = "crates/ui_macros" }
 ui_prompt = { path = "crates/ui_prompt" }
 util = { path = "crates/util" }
 util_macros = { path = "crates/util_macros" }
+vercel = { path = "crates/vercel" }
 vim = { path = "crates/vim" }
 vim_mode_setting = { path = "crates/vim_mode_setting" }
 
@@ -593,7 +595,7 @@ tree-sitter-html = "0.23"
 tree-sitter-jsdoc = "0.23"
 tree-sitter-json = "0.24"
 tree-sitter-md = { git = "https://github.com/tree-sitter-grammars/tree-sitter-markdown", rev = "9a23c1a96c0513d8fc6520972beedd419a973539" }
-tree-sitter-python = "0.23"
+tree-sitter-python = { git = "https://github.com/zed-industries/tree-sitter-python", rev = "218fcbf3fda3d029225f3dec005cb497d111b35e" }
 tree-sitter-regex = "0.24"
 tree-sitter-ruby = "0.23"
 tree-sitter-rust = "0.24"
