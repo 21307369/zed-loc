@@ -51,7 +51,7 @@ jobs:
           if "$rustup_installed"; then
               rustup target add "$remote_server_triple"
           fi
-          script/generate-licenses
+
 
       - name: Build Remote Server
         run: |
@@ -60,7 +60,7 @@ jobs:
           if [[ "$remote_server_triple" == "$musl_triple" ]]; then
               export RUSTFLAGS="-C target-feature=+crt-static"
           fi
-          cargo build -p remote_server --target x86_64-unknown-linux-gnu-musl --release
+          cargo build -p remote_server --target ${remote_server_triple} --release
 
       - name: Strip debug symbols
         run: |
@@ -71,7 +71,7 @@ jobs:
       - name: Create tarball
         run: |
           mkdir -p package
-          cp zed/target/x86_64-unknown-linux-gnu/release/remote_server package/
+          cp zed/target/${remote_server_triple}/release/remote_server package/
           tar czvf remote_server-linux.tar.gz package/*
 
       - name: Upload artifact
