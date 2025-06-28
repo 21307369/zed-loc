@@ -49,9 +49,9 @@ jobs:
       - name: Create tarball
         run: |
           mkdir -p package
-          cp zed/target/x86_64-unknown-linux-musl/release/remote_server package/
+          cp "zed/${target_dir}/remote_server" package/
           if [ "$(ls -A package)" ]; then
-            tar czvf remote_server-linux.tar.gz -C package .
+            gzip -f --stdout --best  package/remote_server > remote_server-linux.gz
           else
             echo "Error: package directory is empty"
             exit 1
@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: remote_server-linux
-          path: remote_server-linux.tar.gz
+          path: remote_server-linux.gz
 
       - name: Create Release
         id: create_release
@@ -80,6 +80,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./remote_server-linux.tar.gz
-          asset_name: remote_server-linux.tar.gz
+          asset_path: ./remote_server-linux.gz
+          asset_name: remote_server-linux.gz
           asset_content_type: application/gzip
