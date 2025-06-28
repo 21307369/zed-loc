@@ -16,7 +16,20 @@ jobs:
           path: zed
 
       - name: Install Rust
-        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install cross
+        run: cargo install cross
+
+      - name: Add target platform
+        run: rustup target add x86_64-unknown-linux-gnu
+
+      - name: Start Docker
+        run: |
+          sudo dockerd --daemon.json='{"hosts":["unix:///var/run/docker.sock"]}' > /tmp/docker.log 2>&1 &
+          sleep 10 # Wait for Docker to initialize
 
       - name: 安装 Linux 依赖项
         run: |
