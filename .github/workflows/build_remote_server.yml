@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TARGET_DIR: "target/x86_64-unknown-linux-musl/release"
     steps:
       - uses: actions/checkout@v4
       - name: 手动同步 zed 源代码
@@ -17,6 +19,8 @@ jobs:
 
       - name: Install Rust
         run: |
+          echo $TARGET_DIR
+          exit 1
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
@@ -36,20 +40,19 @@ jobs:
       - name: Strip debug symbols
         run: |
           cd zed
-          target_dir="target/x86_64-unknown-linux-musl/release"
-          if [ -f "${target_dir}/remote_server" ]; then
+          if [ -f "${TARGET_DIR}/remote_server" ]; then
             echo "Stripping debug symbols from remote_server"
-            objcopy --only-keep-debug "${target_dir}/remote_server" "${target_dir}/remote_server.dbg"
-            objcopy --strip-debug "${target_dir}/remote_server"
+            objcopy --only-keep-debug "${TARGET_DIR}/remote_server" "${TARGET_DIR}/remote_server.dbg"
+            objcopy --strip-debug "${TARGET_DIR}/remote_server"
           else
-            echo "Error: remote_server not found in ${target_dir}"
+            echo "Error: remote_server not found in ${TARGET_DIR}"
             exit 1
           fi
 
       - name: Create tarball
         run: |
           mkdir -p package
-          cp "zed/${target_dir}/remote_server" package/
+          cp "zed/${TARGET_DIR}/remote_server" package/
           if [ "$(ls -A package)" ]; then
             gzip -f --stdout --best  package/remote_server > remote_server-linux.gz
           else
