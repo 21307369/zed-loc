@@ -20,26 +20,53 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
-      - name: Install cross
-        run: cargo install cross
-
       - name: Add target platform
         run: rustup target add x86_64-unknown-linux-gnu
-
-      - name: Start Docker
-        run: |
-          sudo dockerd --daemon.json='{"hosts":["unix:///var/run/docker.sock"]}' > /tmp/docker.log 2>&1 &
-          sleep 10 # Wait for Docker to initialize
 
       - name: 安装 Linux 依赖项
         run: |
           cp mac/github-config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
           ./zed/script/linux
           ./zed/script/install-mold 2.34.0
-          ./zed/script/clear-target-dir-if-larger-than 100
+          ./zed/script/clear-target-dir-if-larger-than 100    
+
+      - name: Prepare environment variables for remote_server
+        run: |
+          cd zed
+          export ZED_BUNDLE=true
+          channel=$(<crates/zed/RELEASE_CHANNEL)
+          target_dir="${CARGO_TARGET_DIR:-target}"
+          version="$(script/get-crate-version zed)"
+          export RELEASE_VERSION="${version}"
+          commit=$(git rev-parse HEAD | cut -c 1-7)
+          version_info=$(rustc --version --verbose)
+          host_line=$(echo "$version_info" | grep host)
+          target_triple=${host_line#*: }
+          musl_triple=${target_triple%-gnu}-musl
+          remote_server_triple=${musl_triple}
+          rustup_installed=false
+          if command -v rustup >/dev/null 2>&1; then
+              rustup_installed=true
+          fi
+          if "$rustup_installed"; then
+              rustup target add "$remote_server_triple"
+          fi
+          script/generate-licenses
 
       - name: Build Remote Server
-        run: cd zed && cross build -p remote_server --target x86_64-unknown-linux-gnu --release
+        run: |
+          cd zed
+          export CC=$(which clang)
+          if [[ "$remote_server_triple" == "$musl_triple" ]]; then
+              export RUSTFLAGS="-C target-feature=+crt-static"
+          fi
+          cargo build -p remote_server --target x86_64-unknown-linux-gnu-musl --release
+
+      - name: Strip debug symbols
+        run: |
+          cd zed
+          objcopy --only-keep-debug "${target_dir}/${remote_server_triple}/release/remote_server" "${target_dir}/${remote_server_triple}/release/remote_server.dbg"
+          objcopy --strip-debug "${target_dir}/${remote_server_triple}/release/remote_server"
 
       - name: Create tarball
         run: |
