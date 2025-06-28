@@ -25,7 +25,7 @@ jobs:
 
       - name: 安装 Linux 依赖项
         run: |
-          cp ../mac/github-config.toml zed/.cargo/config.toml && cp ../mac/Cargo.toml zed/Cargo.toml
+          cp mac/github-config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
           ./zed/script/linux
           ./zed/script/install-mold 2.34.0
           ./zed/script/clear-target-dir-if-larger-than 100
@@ -38,6 +38,7 @@ jobs:
           cd zed
           target_dir="target/x86_64-unknown-linux-musl/release"
           if [ -f "${target_dir}/remote_server" ]; then
+            echo "Stripping debug symbols from remote_server"
             objcopy --only-keep-debug "${target_dir}/remote_server" "${target_dir}/remote_server.dbg"
             objcopy --strip-debug "${target_dir}/remote_server"
           else
