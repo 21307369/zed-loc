@@ -59,8 +59,9 @@ jobs:
           export CC=$(which clang)
           if [[ "$remote_server_triple" == "$musl_triple" ]]; then
               export RUSTFLAGS="-C target-feature=+crt-static"
+              rustup target add "$remote_server_triple" || echo "Failed to add custom target, proceeding with build..."
           fi
-          cargo build -p remote_server --target ${remote_server_triple} --release
+          cargo build -p remote_server --target $remote_server_triple --release
 
       - name: Strip debug symbols
         run: |
