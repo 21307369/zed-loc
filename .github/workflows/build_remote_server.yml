@@ -43,7 +43,8 @@ jobs:
           host_line=$(echo "$version_info" | grep host)
           target_triple=${host_line#*: }
           musl_triple=${target_triple%-gnu}-musl
-          remote_server_triple=${musl_triple}
+          # 默认使用 x86_64-unknown-linux-musl 避免空值
+          remote_server_triple=${musl_triple:-x86_64-unknown-linux-musl}
           rustup_installed=false
           if command -v rustup >/dev/null 2>&1; then
               rustup_installed=true
@@ -51,7 +52,6 @@ jobs:
           if "$rustup_installed"; then
               rustup target add "$remote_server_triple"
           fi
-
 
       - name: Build Remote Server
         run: |
@@ -61,7 +61,7 @@ jobs:
               export RUSTFLAGS="-C target-feature=+crt-static"
               rustup target add "$remote_server_triple" || echo "Failed to add custom target, proceeding with build..."
           fi
-          cargo build -p remote_server --target $remote_server_triple --release
+          cargo build -p remote_server --target ${remote_server_triple:-x86_64-unknown-linux-musl} --release
 
       - name: Strip debug symbols
         run: |
