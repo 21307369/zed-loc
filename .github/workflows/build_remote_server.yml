@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: 手动同步 zed 源代码
@@ -21,59 +21,40 @@ jobs:
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
       - name: Add target platform
-        run: rustup target add x86_64-unknown-linux-gnu
+        run: rustup target add x86_64-unknown-linux-musl
 
       - name: 安装 Linux 依赖项
         run: |
-          cp mac/github-config.toml zed/.cargo/config.toml && cp mac/Cargo.toml zed/Cargo.toml
+          cp ../mac/github-config.toml zed/.cargo/config.toml && cp ../mac/Cargo.toml zed/Cargo.toml
           ./zed/script/linux
           ./zed/script/install-mold 2.34.0
-          ./zed/script/clear-target-dir-if-larger-than 100    
-
-      - name: Prepare environment variables for remote_server
-        run: |
-          cd zed
-          export ZED_BUNDLE=true
-          channel=$(<crates/zed/RELEASE_CHANNEL)
-          target_dir="${CARGO_TARGET_DIR:-target}"
-          version="$(script/get-crate-version zed)"
-          export RELEASE_VERSION="${version}"
-          commit=$(git rev-parse HEAD | cut -c 1-7)
-          version_info=$(rustc --version --verbose)
-          host_line=$(echo "$version_info" | grep host)
-          target_triple=${host_line#*: }
-          musl_triple=${target_triple%-gnu}-musl
-          # 默认使用 x86_64-unknown-linux-musl 避免空值
-          remote_server_triple=${musl_triple:-x86_64-unknown-linux-musl}
-          rustup_installed=false
-          if command -v rustup >/dev/null 2>&1; then
-              rustup_installed=true
-          fi
-          if "$rustup_installed"; then
-              rustup target add "$remote_server_triple"
-          fi
+          ./zed/script/clear-target-dir-if-larger-than 100
 
       - name: Build Remote Server
-        run: |
-          cd zed
-          export CC=$(which clang)
-          if [[ "$remote_server_triple" == "$musl_triple" ]]; then
-              export RUSTFLAGS="-C target-feature=+crt-static"
-              rustup target add "$remote_server_triple" || echo "Failed to add custom target, proceeding with build..."
-          fi
-          cargo build -p remote_server --target ${remote_server_triple:-x86_64-unknown-linux-musl} --release
+        run: cd zed && cargo build -p remote_server --target x86_64-unknown-linux-musl --release
 
       - name: Strip debug symbols
         run: |
           cd zed
-          objcopy --only-keep-debug "${target_dir}/${remote_server_triple}/release/remote_server" "${target_dir}/${remote_server_triple}/release/remote_server.dbg"
-          objcopy --strip-debug "${target_dir}/${remote_server_triple}/release/remote_server"
+          target_dir="target/x86_64-unknown-linux-musl/release"
+          if [ -f "${target_dir}/remote_server" ]; then
+            objcopy --only-keep-debug "${target_dir}/remote_server" "${target_dir}/remote_server.dbg"
+            objcopy --strip-debug "${target_dir}/remote_server"
+          else
+            echo "Error: remote_server not found in ${target_dir}"
+            exit 1
+          fi
 
       - name: Create tarball
         run: |
           mkdir -p package
-          cp zed/target/${remote_server_triple}/release/remote_server package/
-          tar czvf remote_server-linux.tar.gz package/*
+          cp zed/target/x86_64-unknown-linux-musl/release/remote_server package/
+          if [ "$(ls -A package)" ]; then
+            tar czvf remote_server-linux.tar.gz -C package .
+          else
+            echo "Error: package directory is empty"
+            exit 1
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
