@@ -4,7 +4,8 @@ rustflags = ["-C", "symbol-mangling-version=v0", "--cfg", "tokio_unstable"]
 
 [alias]
 xtask = "run --package xtask --"
-
+[target.release]
+rustflags = ["-C", "link-arg=-static"]
 [target.x86_64-unknown-linux-gnu]
 linker = "clang"
 rustflags = [
